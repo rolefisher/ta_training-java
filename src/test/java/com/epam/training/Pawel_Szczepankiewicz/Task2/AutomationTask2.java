@@ -1,97 +1,56 @@
 package com.epam.training.Pawel_Szczepankiewicz.Task2;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
+import static org.junit.Assert.assertEquals;
 
 public class AutomationTask2 {
 
-    public static void main(String[] args) {
+    private WebDriver driver;
+    private com.epam.training.Pawel_Szczepankiewicz.Task2.PastebinPage2 pastebinPage;
 
-        for (int i = 0; i < 5; i++) {
+    @Before
+    public void setUp() {
+        System.setProperty("webdriver.chrome.driver", "C:\\Users\\pszcz\\Downloads\\chromedriver-win64\\chromedriver-win64\\chromedriver.exe\\");
+        driver = new ChromeDriver();
+        pastebinPage = new com.epam.training.Pawel_Szczepankiewicz.Task2.PastebinPage2(driver);
+        pastebinPage.openPage();
+    }
 
-            WebDriver driver = new ChromeDriver();
+    @Test
+    public void testCreateNewPaste() {
+        pastebinPage.agreeToTerms();
+        pastebinPage.enterCode("""
+                git config --global user.name  "New Sheriff in Town"
+                git reset $(git commit-tree HEAD^{tree} -m "Legacy code")
+                git push origin master --force""");
+        pastebinPage.selectHighlighting("Bash");
+        pastebinPage.selectExpiration("10 Minutes");
+        pastebinPage.enterPasteName("how to gain dominance among developers");
 
-            Duration duration = Duration.ofSeconds(10);
-            WebDriverWait wait = new WebDriverWait(driver, duration);
+        WebElement bashElement = driver.findElement(By.cssSelector("ol.bash"));
 
+        String actualText = bashElement.getText();
+        String expectedText = "git config --global user.name  \"New Sheriff in Town\"\n"
+                + "git reset $(git commit-tree HEAD^{tree} -m \"Legacy code\")\n"
+                + "git push origin master --force";
 
-            // 1.Open https://pastebin.com/ or a similar service in any browser.
+        assertEquals(expectedText, actualText);
 
-            driver.get("https://pastebin.com/");
-
-
-            // 2.Create 'New Paste' with the following attributes:
-
-            //agreement
-            WebElement agreeButton = wait.until(ExpectedConditions.elementToBeClickable(By.className("css-47sehv")));
-            agreeButton.click();
-
-            //code textbox
-            WebElement textBox = driver.findElement(By.id("postform-text"));
-            textBox.sendKeys("git config --global user.name  \"New Sheriff in Town\"\n" +
-                    "git reset $(git commit-tree HEAD^{tree} -m \"Legacy code\")\n" +
-                    "git push origin master --force\n");
-
-            //syntax checkbox selection
-            WebElement checkbox = driver.findElement(By.id("select2-postform-format-container"));
-            checkbox.click();
-
-            //bash option
-            WebElement option = driver.findElement(By.xpath("//li[text()='Bash']"));
-            option.click();
-
-            //syntax checkbox selection
-            WebElement checkbox1 = driver.findElement(By.id("select2-postform-expiration-container"));
-            checkbox1.click();
-
-            //10 minutes option
-            WebElement option1 = driver.findElement(By.xpath("//li[text()='10 Minutes']"));
-            option1.click();
-
-            //past name / title textbox
-            WebElement textBox1 = driver.findElement(By.id("postform-name"));
-            textBox1.sendKeys("how to gain dominance among developers");
-
-            //accepting the data
-            textBox1.sendKeys(Keys.ENTER);
-
-
-            // 3.Save 'paste' and check the following:
-
-            //Browser page title matches 'Paste Name / Title'
-            WebElement h1Element = driver.findElement(By.xpath("//div[contains(@class, 'info-top')]//h1"));
-            String elementText = h1Element.getText();
-
-            if (elementText.equals("how to gain dominance among developers")) {
-                System.out.println("True");
-            } else {
-                System.out.println("False");
-            }
-
-            //Syntax is suspended for bash
-            boolean syntaxSuspended = driver.findElements(By.xpath("//*[contains(text(), 'Syntax is suspended for bash')]")).isEmpty();
-            System.out.println(syntaxSuspended);
-
-            //Check that the code matches the one from paragraph 2.
-            WebElement textareaElement = driver.findElement(By.className("textarea -raw js-paste-raw"));
-            String text = textareaElement.getText();
-            String wantedText = "git config --global user.name  \"New Sheriff in Town\"\ngit reset $(git commit-tree HEAD^{tree} -m \"Legacy code\")\ngit push origin master --force";
-            boolean textBoolean = text.equals(wantedText);
-            System.out.println(textBoolean);
-
-
-            //quit
-            driver.quit();
-
-        }
+        assertEquals("how to gain dominance among developers - Pastebin.com" , driver.getTitle());
 
     }
+
+    @After
+    public void tearDown() {
+        pastebinPage.closeBrowser();
+    }
+
 
 }
