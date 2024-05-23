@@ -138,4 +138,8 @@ public class GoogleCloudPlatformCalculator {
 
     }
 
+    public void closeBrowser() {
+        driver.quit();
+    }
+
 }

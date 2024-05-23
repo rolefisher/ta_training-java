@@ -1,4 +1,4 @@
-package com.epam.training.Pawel_Szczepankiewicz.Task3;
+package com.epam.training.Pawel_Szczepankiewicz.Framework;
 
 import org.junit.After;
 import org.junit.Before;
@@ -9,13 +9,13 @@ import org.openqa.selenium.chrome.ChromeDriver;
 public class AutomationTask3 {
 
     private WebDriver driver;
-    private com.epam.training.Pawel_Szczepankiewicz.Task3.GoogleCloudPlatformCalculator GoogleCalculator;
+    private GoogleCloudPlatformCalculator GoogleCalculator;
 
     @Before
     public void setUp() {
         System.setProperty("webdriver.chrome.driver", "C:\\Users\\pszcz\\Downloads\\chromedriver-win64\\chromedriver-win64\\chromedriver.exe\\");
         driver = new ChromeDriver();
-        GoogleCalculator = new com.epam.training.Pawel_Szczepankiewicz.Task3.GoogleCloudPlatformCalculator(driver);
+        GoogleCalculator = new GoogleCloudPlatformCalculator(driver);
         GoogleCalculator.openPage();
     }
 
